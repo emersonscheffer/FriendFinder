@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <title>Survey</title>
 
@@ -126,14 +127,15 @@
 
     <footer>
 
-        <a href="/">
-            <button onclick="collect()" id="sub-btn">
-                <div id="btnWrapper">
-                    <div id="circle">√</div>
-                    <h4>Submit</h4>
-                </div>
-            </button>
-        </a>
+
+        <button onclick="collect()" id="sub-btn">
+            <div id="btnWrapper">
+                <div id="circle">√</div>
+                <h4>Submit</h4>
+            </div>
+        </button>
+
+
 
     </footer>
 
@@ -184,7 +186,7 @@
             selectFn(index + 1);
         }
 
-        let results = [];
+        let user = {};
 
         function collect() {
 
@@ -211,32 +213,56 @@
             var val10 = sel10.options[sel10.selectedIndex].value;
 
 
-            results = [];
-            results.push(document.getElementById('name').value);
-            results.push(document.getElementById('link').value);
+            user = {};
+            if (document.getElementById('name').value === "") {
+                console.log("Please enter your name");
+            } else {
+                user.name = document.getElementById('name').value.trim();
+                if (document.getElementById('link').value === "") {
+                    console.log("Please enter the link");
+                } else {
+                    user.photo = document.getElementById('link').value.trim();
+                    if (false) {
+                        // if (val1 === "choose" || val2 === "choose" || val3 === "choose" || val4 === "choose" || val5 ===
+                        //     "choose" || val6 === "choose" || val7 === "choose" || val8 === "choose" || val9 === "choose" ||
+                        //     val10 === "choose") {
+                        console.log("there is a choose");
+                    } else {
 
-            results.push(val1);
-            results.push(val2);
-            results.push(val3);
-            results.push(val4);
-            results.push(val5);
-            results.push(val6);
-            results.push(val7);
-            results.push(val8);
-            results.push(val9);
-            results.push(val10);
+                        user.scores = [val1];
+                        user.scores.push(val2);
+                        user.scores.push(val3);
+                        user.scores.push(val4);
+                        user.scores.push(val5);
+                        user.scores.push(val6);
+                        user.scores.push(val7);
+                        user.scores.push(val8);
+                        user.scores.push(val9);
+                        user.scores.push(val10);
+
+                    }
+                }
+            }
+
+
+            
+            $.post("/api/friends", user)
+                .then(function (data) {
+                    console.log("survey.html", data);
+                    
+                });
+
+
+
 
             callLog();
 
-            return results;
+            return user;
         }
-
 
         function callLog() {
-            console.log(results);
+            console.log(user);
         }
-
-        
     </script>
 
 </body>
