@@ -128,7 +128,7 @@
     <footer>
 
 
-        <button onclick="collect()" id="sub-btn">
+        <button class="submit" onclick="collect()" id="sub-btn">
             <div id="btnWrapper">
                 <div id="circle">√</div>
                 <h4>Submit</h4>
@@ -188,6 +188,8 @@
 
         let user = {};
 
+        var goodToSend = false;
+
         function collect() {
 
             var sel1 = document.getElementById("select1");
@@ -215,18 +217,20 @@
 
             user = {};
             if (document.getElementById('name').value === "") {
-                console.log("Please enter your name");
+                goodToSend = false;
+                alert("Please enter your name");
             } else {
                 user.name = document.getElementById('name').value.trim();
                 if (document.getElementById('link').value === "") {
-                    console.log("Please enter the link");
+                    alert("Please enter the image link");
+                    goodToSend = false;
                 } else {
                     user.photo = document.getElementById('link').value.trim();
-                    if (false) {
-                        // if (val1 === "choose" || val2 === "choose" || val3 === "choose" || val4 === "choose" || val5 ===
-                        //     "choose" || val6 === "choose" || val7 === "choose" || val8 === "choose" || val9 === "choose" ||
-                        //     val10 === "choose") {
-                        console.log("there is a choose");
+
+                    if (val1 === "choose" || val2 === "choose" || val3 === "choose" || val4 === "choose" || val5 ===
+                        "choose" || val6 === "choose" || val7 === "choose" || val8 === "choose" || val9 === "choose" ||
+                        val10 === "choose") {
+                        goodToSend = false;
                     } else {
 
                         user.scores = [val1];
@@ -240,29 +244,51 @@
                         user.scores.push(val9);
                         user.scores.push(val10);
 
+                        goodToSend = true;
                     }
                 }
             }
 
+            return user;
+        }
 
-            
-            $.post("/api/friends", user)
-                .then(function (data) {
-                    console.log("survey.html", data);
+
+        $(".submit").on("click", function (event) {
+            event.preventDefault();
+
+            if (goodToSend === true) {
+                $.post("/api/friends", user, function (data) {
+                    if (data) {
+                        alert("hurray");
+                    } else {
+                        alert("nah");
+                    }
+                });
+
+                $.ajax({
+                    url: "/api/friends",
+                    method: "GET"
+                }).then(function (friendsData) {
+
+                    if (friendsData.length <= 1) {
+                        alert("Wait a little, someone will come,... and find you!");
+                    } else {
+                        console.log(friendsData);
+                        console.log(friendsData[0].name);
+                        alert("MODAL");
+                    }
+
+
                     
                 });
 
 
+            } else {
+                alert("Please answer all questions");
+            }
 
 
-            callLog();
-
-            return user;
-        }
-
-        function callLog() {
-            console.log(user);
-        }
+        });
     </script>
 
 </body>

@@ -1,27 +1,20 @@
-const router = require("express").Router();
-
-//const path = require('path');
 
 
-let possibleFriends = [];
+var friendsData = require("./../data/friendsData");
 
-router.get("/api/friends", function (req, res) {
-    res.send("hello");
-});
+module.exports = function(app){
+    
+    app.get("/api/friends", function(req, res){
+        res.json(friendsData);
+    });
 
 
-// Create New Characters - takes in JSON input
-router.post("/api/friends", function (req, res) {
+    app.post("/api/friends", function(req, res){
 
-    var newFriend = req.body;
+        friendsData.push(req.body);
+        res.json(true);
 
-    newFriend.friendName = newFriend.friendName.replace(/\s+/g, "").toLowerCase();
+    });
 
-    console.log(newFriend);
 
-    possibleFriends.push(newFriend);
-
-    res.json(newFriend);
-});
-
-module.exports = router;
+};
