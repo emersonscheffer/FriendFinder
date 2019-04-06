@@ -169,7 +169,10 @@
             height: 200px;
             border: solid 3px #797979;
             border-radius: 5px;
-            background: cover;
+            /* background-image: url("./app/imgs/image.jpg"); */
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 90% auto;
         }
     </style>
 </head>
@@ -202,11 +205,11 @@
                 <span class="close">&times;</span>
                 <div class="divs">
                     <div class="photo" id="photo"></div>
-                    <h1 class="name" id="name">Emerson</h1>
+                    <h1 class="name" id="name">Friend</h1>
                 </div>
                 <div class="divs">
                     <div class="photo" id="photo"></div>
-                    <h1 class="name" id="name">Emerson</h1>
+                    <h1 class="name" id="name">Friend</h1>
                 </div>
                 <p id="content"></p>
     
@@ -359,16 +362,26 @@
                     url: "/api/friends",
                     method: "GET"
                 }).then(function (friendsData) {
+                    var currentUserName = friendsData[friendsData.length - 1].name;
+                    var currentUserPhoto = friendsData[friendsData.length - 1].photo;
+
+                    var matchFriendName;
+                    var matchFriendPhoto;
+
+                    var defaultPhoto = 'url("./../imgs/image.jpg")';
 
                     if (friendsData.length <= 1) {
-                        modalWindow("Wait a little, someone will come,... and find you!")
+                        modalWindow("", currentUserPhoto, defaultPhoto, currentUserName, "Friend");
+
                         //alert("Wait a little, someone will come,... and find you!");
                     } else if (friendsData.length === 2) {
-                        modalWindow("two of you, perfect");
 
-                        console.log("two of you, perfect");
+                        modalWindow("", currentUserPhoto, friendsData[1].photo, currentUserName, friendsData[1].name);
+
+                        
                     } else {
 
+                        
 
                         for (let j = 0; j < friendsData.length; j++) {
                             friendsData[j].totalDifference = 50;
@@ -412,7 +425,7 @@
 
                         }
 
-
+                        
 
                         function bubleSort(arr) {
                             var temp;
@@ -429,13 +442,36 @@
 
                         bubleSort(friendsData);
                         console.log(friendsData);
+                        console.log(currentUserName);
+
+                        var indexCurr = 0;
+
+                        for (var i = 0; i < friendsData.length; i++) {
+                            if(currentUserName === friendsData[i].name){
+                                console.log(i);
+                                indexCurr = i;
+                            }
+                        }
+                        for (var m = 0; m < friendsData.length; m++) {
+                            if(friendsData[m].totalDifference == friendsData[indexCurr].totalDifference){
+                                if(m != indexCurr){
+                                    matchFriendName = friendsData[m].name;
+                                    matchFriendPhoto = friendsData[m].photo;
+                                }
+                            } else {
+                                if(friendsData.length - 1 == indexCurr){
+                                    matchFriendName = friendsData[indexCurr - 1].name;
+                                    matchFriendPhoto = friendsData[indexCurr -1].photo;
+                                } else {
+                                    matchFriendName = friendsData[indexCurr + 1].name;
+                                    matchFriendPhoto = friendsData[indexCurr +1].photo;
+                                }
+                            }
+                        }
 
 
-
-                        modalWindow("lets see");
+                        modalWindow("", currentUserPhoto, matchFriendPhoto, currentUserName, matchFriendName);
                     }
-
-
 
                 });
 
@@ -447,7 +483,7 @@
 
         });
 
-        function modalWindow(content) {
+        function modalWindow(content, image1, image2, nam1, nam2) {
 
             var modal = document.getElementById('myModal');
 
@@ -457,6 +493,19 @@
 
             var cont = document.getElementById('content');
             cont.innerHTML = content;
+
+            var photo1 = document.getElementsByClassName("photo")[0];
+            photo1.style.backgroundImage = 'url("' + image1 + '")';
+
+            var photo2 = document.getElementsByClassName("photo")[1];
+            photo2.style.backgroundImage = 'url("' + image2 + '")';
+
+            var name1 = document.getElementsByClassName("name")[0];
+            name1.innerHTML = nam1;
+
+            var name2 = document.getElementsByClassName("name")[1];
+            name2.innerHTML = nam2;
+
 
             span.onclick = function () {
                 modal.style.display = "none";
