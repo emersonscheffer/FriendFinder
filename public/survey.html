@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+    ></script>
+
+    <title>Survey</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      #wrapper {
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      input {
+        width: 75%;
+        height: 35px;
+        border-radius: 4px;
+        border: none;
+        background-color: rgb(255, 231, 254);
+      }
+
+      input::placeholder {
+        padding-left: 2%;
+        color: rgb(88, 207, 207);
+        font-size: 1.2em;
+      }
+
+      #questions {
+        margin-top: 25px;
+      }
+
+      button {
+        color: white;
+        font-size: 1.5em;
+        padding: 20px;
+        background-color: rgb(255, 5, 151);
+        border: none;
+        border-radius: 4px;
+        width: auto;
+        height: 75px;
+        margin: 0 auto;
+        align-self: center;
+        display: grid;
+
+        transition-duration: 0.2s;
+      }
+
+      button:hover {
+        background-color: rgb(218, 6, 129);
+        width: auto;
+        padding: 22px;
+        transition-duration: 0.2s;
+      }
+
+      button:active {
+        background-color: rgb(255, 5, 151);
+      }
+
+      footer {
+        margin-top: 25px;
+        height: 100px;
+        width: 100%;
+        background-color: rgb(177, 177, 177);
+        display: grid;
+      }
+
+      #btnWrapper {
+        align-self: center;
+        justify-self: center;
+      }
+
+      #circle {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        background-color: white;
+        float: left;
+        color: rgb(255, 5, 151);
+      }
+
+      h4 {
+        margin: 0;
+        padding: 0;
+        float: left;
+        margin-left: 10px;
+      }
+
+      footer a {
+        align-self: center;
+      }
+
+      /* The Modal (background) */
+      .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+      }
+
+      /* Modal Content/Box */
+      .modal-content {
+        background-color: #ffffff;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 70%;
+
+        border-radius: 5px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(80px, auto);
+        /* Could be more or less, depending on screen size */
+      }
+
+      /* The Close Button */
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        grid-row: 1/2;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .divs {
+        grid-row: 2/5;
+        justify-self: center;
+      }
+
+      .photo {
+        width: 150px;
+        height: 200px;
+        border: solid 3px #797979;
+        border-radius: 5px;
+        /* background-image: url("./app/imgs/image.jpg"); */
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 90% auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <header>
+        <h1>Survey Questions</h1>
+        <h2>About You</h2>
+      </header>
+
+      <div id="profile">
+        <p for="name">Name (required)</p>
+        <input type="text" id="name" name="name" placeholder="name" />
+        <p for="pic">Link to photo image (required)</p>
+        <input type="text" id="link" name="pic" placeholder="link" />
+      </div>
+
+      <div id="questions"></div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="divs">
+          <div class="photo" id="photo"></div>
+          <h1 class="name" id="name">Friend</h1>
+        </div>
+        <div class="divs">
+          <div class="photo" id="photo"></div>
+          <h1 class="name" id="name">Friend</h1>
+        </div>
+        <p id="content"></p>
+      </div>
+    </div>
+
+    <footer>
+      <button class="submit" onclick="collect()" id="sub-btn">
+        <div id="btnWrapper">
+          <div id="circle">√</div>
+          <h4>Submit</h4>
+        </div>
+      </button>
+    </footer>
+
+    <!-- <script src="../../app/public/survey.js"></script> -->
+
+    <script>
+      //
+      var questionCollection = [
+        "Your mind is always buzzing with unexplored ideas and plans.",
+        "Generally speaking, you rely more on your experience than your imagination.",
+        "You find it easy to stay relaxed and focused even when there is some pressure.",
+        "You rarely do something just out of sheer curiosity.",
+        "People can rarely upset you.",
+        "It is often difficult for you to relate to other people’s feelings.",
+        "In a discussion, truth should be more important than people’s sensitivities.",
+        "You rarely get carried away by fantasies and ideas.",
+        "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.",
+        "You feel more energetic after spending time with a group of people."
+      ];
+
+      var question;
+
+      function selectFn(n) {
+        var questW = document.createElement("h3");
+        questW.innerHTML = "Question " + n;
+        var questP = document.createElement("p");
+        questP.innerHTML = questionCollection[n - 1];
+
+        var select = document.createElement("select");
+        select.setAttribute("id", "select" + n);
+        select.appendChild(document.createElement("option"));
+        select.lastElementChild.setAttribute("value", "choose");
+        select.lastElementChild.innerHTML = "Choose";
+
+        for (var i = 0; i < 5; i++) {
+          select.appendChild(document.createElement("option"));
+          select.lastElementChild.setAttribute("value", i + 1);
+          select.lastElementChild.innerHTML = i + 1;
+        }
+
+        document.getElementById("questions").appendChild(questW);
+        document.getElementById("questions").appendChild(questP);
+        document.getElementById("questions").appendChild(select);
+      }
+
+      for (let index = 0; index < 10; index++) {
+        selectFn(index + 1);
+      }
+
+      let user = {};
+
+      var goodToSend = false;
+
+      function collect() {
+        var sel1 = document.getElementById("select1");
+        var sel2 = document.getElementById("select2");
+        var sel3 = document.getElementById("select3");
+        var sel4 = document.getElementById("select4");
+        var sel5 = document.getElementById("select5");
+        var sel6 = document.getElementById("select6");
+        var sel7 = document.getElementById("select7");
+        var sel8 = document.getElementById("select8");
+        var sel9 = document.getElementById("select9");
+        var sel10 = document.getElementById("select10");
+
+        var val1 = sel1.options[sel1.selectedIndex].value;
+        var val2 = sel2.options[sel2.selectedIndex].value;
+        var val3 = sel3.options[sel3.selectedIndex].value;
+        var val4 = sel4.options[sel4.selectedIndex].value;
+        var val5 = sel5.options[sel5.selectedIndex].value;
+        var val6 = sel6.options[sel6.selectedIndex].value;
+        var val7 = sel7.options[sel7.selectedIndex].value;
+        var val8 = sel8.options[sel8.selectedIndex].value;
+        var val9 = sel9.options[sel9.selectedIndex].value;
+        var val10 = sel10.options[sel10.selectedIndex].value;
+
+        user = {};
+        if (document.getElementById("name").value === "") {
+          goodToSend = false;
+          alert("Please enter your name");
+        } else {
+          user.name = document.getElementById("name").value.trim();
+          if (document.getElementById("link").value === "") {
+            alert("Please enter the image link");
+            goodToSend = false;
+          } else {
+            user.imagelink = document.getElementById("link").value.trim();
+
+            if (
+              val1 === "choose" ||
+              val2 === "choose" ||
+              val3 === "choose" ||
+              val4 === "choose" ||
+              val5 === "choose" ||
+              val6 === "choose" ||
+              val7 === "choose" ||
+              val8 === "choose" ||
+              val9 === "choose" ||
+              val10 === "choose"
+            ) {
+              goodToSend = false;
+            } else {
+              user.answer1 = val1;
+              user.answer2 = val2;
+              user.answer3 = val3;
+              user.answer4 = val4;
+              user.answer5 = val5;
+              user.answer6 = val6;
+              user.answer7 = val7;
+              user.answer8 = val8;
+              user.answer9 = val9;
+              user.answer10 = val10;
+
+              goodToSend = true;
+            }
+          }
+        }
+
+        return user;
+      }
+
+      $(".submit").on("click", function(event) {
+        event.preventDefault();
+
+        if (goodToSend === true) {
+          $.post("/api/friends", user, function(data) {
+            if (data) {
+            } else {
+              alert("nah");
+            }
+          }).then(console.log("it was posted...")
+          
+          
+          
+          );
+
+          $.ajax({
+            url: "/api/match",
+            method: "GET"
+          }).then(function(friendsData) {
+            console.log(friendsData, " from API");
+
+            modalWindow(" ", friendsData.currentUserPic, friendsData.matchPic, friendsData.currentUser, friendsData.matchName);
+          });
+
+          
+        } else {
+          alert("Please answer all questions");
+        }
+
+        
+      })
+
+      function modalWindow(content, image1, image2, nam1, nam2) {
+        var modal = document.getElementById("myModal");
+
+        var span = document.getElementsByClassName("close")[0];
+
+        modal.style.display = "block";
+
+        var cont = document.getElementById("content");
+        cont.innerHTML = content;
+
+        var photo1 = document.getElementsByClassName("photo")[0];
+        photo1.style.backgroundImage = 'url("' + image1 + '")';
+
+        var photo2 = document.getElementsByClassName("photo")[1];
+        photo2.style.backgroundImage = 'url("' + image2 + '")';
+
+        var name1 = document.getElementsByClassName("name")[0];
+        name1.innerHTML = nam1;
+
+        var name2 = document.getElementsByClassName("name")[1];
+        name2.innerHTML = nam2;
+
+        span.onclick = function() {
+          modal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        };
+      }
+    </script>
+  </body>
+</html>

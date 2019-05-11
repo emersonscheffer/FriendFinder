@@ -1,19 +1,28 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
 
-// const path = require('path');
+const friends = require('./routes/api/friends');
+const match = require('./routes/api/match');
+const html = require('./routes/html/htmlRoutes');
 
-// const routes = require('./app/routing/htmlRoutes');
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/friendshut";
+mongoose.connect(MONGODB_URI);
+
+const PORT = process.env.PORT || 5000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// app.use(routes);
-require("./app/routing/apiRoutes")(app);
-require("./app/routing/htmlRoutes")(app);
+app.use(express.static("public"));
+
+app.use('/api/friends', friends);
+app.use('/api/match', match);
+app.use('/html/htmlRoutes', html);
+
 
 app.listen(PORT, () => {
-    console.log("Server started on PORT", PORT);
+  console.log("Server started on PORT", PORT);
 });
